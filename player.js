@@ -43,5 +43,16 @@ exports.show = function(questions) {
             return q.category === cat && q.value === value;
         })[0];
     }
+
+    this.grade = function(question, answer) {
+        var value = parseInt(question.value.replace('$', ''));
+        console.log(value);
+        var f = new FuzzySet([question.answer]);
+        var correctness = f.get(answer)[0][0];
+        console.log(correctness);
+        var points = (correctness > 0.4) ? value : -value;
+        return points;
+    }
+
 }
 
