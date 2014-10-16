@@ -1,0 +1,9 @@
+{
+  "name": "GeoParty",
+  "version": "0.0.1",
+  "description": "Jeopardy clone for hackathon",
+  "dependencies": {
+    "express": "^4.9.7",
+    "socket.io": "^1.1.0"
+  }
+}
