@@ -72,11 +72,20 @@ io.on('connection', function(socket) {
             return p.name == data.player;
         })[0];
         var correctAnswer = question.answer;
-        var points = show.grade(question, data.answer);
+        var grades = show.grade(question, data.answer);
+        var points = grades[0];
+        var unanswered = grades[1];
         player.money += points;
         console.log('Player ' + player.name + ' got ' + points + ' points.');
-        io.emit('rightAnswer', {points: points, answer: correctAnswer});
+        io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
         io.emit('playerChange', {players: players});
+        console.log(unanswered);
+        if(unanswered === 0 && round === 0) {
+            round++
+            io.emit('nextRound', show.getQuestions(round));
+        } else if (unanswered == 0 && round === 1) {
+            io.emit('endGame', {});
+        }
     });
 });
 

@@ -1,5 +1,38 @@
 var socket = io();
 var player;
+
+var insertQuestions = function(_questions) {
+    var $target = $('.gamearea');
+    $target.empty();
+    var $table = $('<table>');
+    var $headerRow = $('<tr>');
+    var row1 = $('<tr>');
+    var row2 = $('<tr>');
+    var row3 = $('<tr>');
+    var row4 = $('<tr>');
+    var row5 = $('<tr>');
+    var rows = [row1, row2, row3, row4, row5];
+    for(var category in _questions) {
+        var $th = $('<th>');
+        $th.html(category);
+        $headerRow.append($th);
+        var questions = _questions[category];
+        _.each(questions, function(q, i) {
+            var row = $(rows[i]);
+            var $td = $('<td>');
+            $td.html(q.value);
+            $td.attr({'class': 'question'});
+            $td.attr({'data-key': q.value + '::' + q.category});
+            row.append($td);
+        });
+    }
+    $table.append($headerRow);
+    _.each(rows, function(r) {
+        $table.append(r);
+    });
+    $target.append($table);
+    };
+    
 $(function() {
     $('#submit').on('click', function(ev) {
         var name = $(ev.target).parent().find('input').val();
@@ -20,36 +53,10 @@ $(function() {
     });
 
     socket.on('gameInit', function(data) {
-        var $target = $('.gamearea');
-        $target.empty();
-        var $table = $('<table>');
-        var $headerRow = $('<tr>');
-        var row1 = $('<tr>');
-        var row2 = $('<tr>');
-        var row3 = $('<tr>');
-        var row4 = $('<tr>');
-        var row5 = $('<tr>');
-        var rows = [row1, row2, row3, row4, row5];
-        for(var category in data.questions) {
-            var $th = $('<th>');
-            $th.html(category);
-            $headerRow.append($th);
-            var questions = data.questions[category];
-            _.each(questions, function(q, i) {
-                var row = $(rows[i]);
-                var $td = $('<td>');
-                $td.html(q.value);
-                $td.attr({'class': 'question'});
-                $td.attr({'data-key': q.value + '::' + q.category});
-                row.append($td);
+        insertQuestions(data.questions);
             });
-        }
-        $table.append($headerRow);
-        _.each(rows, function(r) {
-            $table.append(r);
-        });
-        $target.append($table);
-    });
+
+
 
     $('.gamearea').on('click', '.question:not(.done)', function(ev) {
         var key = $(ev.target).data('key');
@@ -80,9 +87,24 @@ $(function() {
         var key = $target.parent().data('key');
         var answer = $target.parent().find('input').val();
         socket.emit('guess', {question: key, answer: answer, player: player});
-        $('.overlay').hide();
-        $('.question[data-key="' + key + '"]').empty();
-        $('.question[data-key="' + key + '"]').addClass('done');
-        $('.gamearea').show();
    });
+
+   socket.on('rightAnswer', function(data) {
+       var key = data.key;
+       var playerName = data.player.name;
+
+       $('.overlay').hide();
+       var $target = $('.question[data-key="' + key + '"]')
+       $target.html('$' + data.points + ' for ' + playerName);
+       $target.addClass('done');
+       if(data.points < 0) {
+          $target.addClass('wrong');
+       }
+       $('.gamearea').show();
+   });
+
+   socket.on('nextRound', function(questions) {
+       insertQuestions(questions);    
+   });
+
 });

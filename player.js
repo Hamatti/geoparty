@@ -8,6 +8,7 @@ exports.user = function(name) {
 exports.show = function(questions) {
     this.rounds = ['Jeopardy!', 'Double Jeopardy!'];
     this.questions = questions;
+    this.unanswered = 0;
 
     this.getByRound = function(round) {
         return _.filter(this.questions, function(q) {
@@ -33,6 +34,7 @@ exports.show = function(questions) {
         _.each(questions, function(q) {
             qs[q.category].push(q);
         });
+        this.unanswered = questions.length;
         return qs;
     }
 
@@ -45,13 +47,19 @@ exports.show = function(questions) {
     }
 
     this.grade = function(question, answer) {
-        var value = parseInt(question.value.replace('$', ''));
+        var value = parseInt(question.value.replace('$', '').replace(',', ''));
         console.log(value);
         var f = new FuzzySet([question.answer]);
-        var correctness = f.get(answer)[0][0];
+        var fuzz = f.get(answer);
+        if(fuzz != null) {
+            correctness = fuzz[0][0];
+        } else {
+            correctness = 0;
+        }
         console.log(correctness);
         var points = (correctness > 0.4) ? value : -value;
-        return points;
+        this.unanswered--;
+        return [points, this.unanswered];
     }
 
 }
