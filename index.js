@@ -7,7 +7,7 @@ var http = require('http').Server(app);
 app.use('/css', express.static(path.join(__dirname, '/css')));
 app.use('/img', express.static(path.join(__dirname, '/img')));
 app.use('/js', express.static(path.join(__dirname, '/js')));
-app.use('/font-awesome-4.10', express.static(path.join(__dirname, '/font-awesome-4.10')));;
+app.use('/fonts', express.static(path.join(__dirname, '/fonts')));
 
 app.get('/', function(req, res){
       res.sendFile(path.join(__dirname, 'index.html'));
