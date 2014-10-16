@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+
+    <title> GeoParty - The Game with Answers </title>
+
+    <meta charset="utf8" />
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+
+        .gamearea {
+            border: 1px solid black;
+            height: 800px;
+            margin-right: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1> GEOPARTY</h1>
+
+<div hidden id="game">
+    <div class="row">
+        <div class="col-md-2">
+            <h3> Players </h3>
+            <ul class="playerlist">
+            </ul>
+        </div>
+        <div class="col-md-9 gamearea">
+        </div>
+    </div>
+</div>
+
+<div id="name">
+    Who are you? <input /> <button id="submit">Join the game</button>
+</div>
+<script>
+    var socket = io();
+    $(function() {
+        $('#submit').on('click', function(ev) {
+            var name = $(ev.target).parent().find('input').val();
+            $('#name').hide();
+            socket.emit('name', {'name': name});
+            $('#game').show();
+        });
+
+        socket.on('playerChange', function(data) {
+            var ul = $('.playerlist');
+            ul.empty();
+            _.each(data.players, function(p) {
+                var $li = $('<li>');
+                $li.append(p.name);
+                ul.append($li);
+            });
+        });
+
+        socket.on('gameInit', function(data) {
+            console.log(data);
+        });
+    });
+</script>
+</body>
+</html>
