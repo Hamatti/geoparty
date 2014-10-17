@@ -103,21 +103,21 @@ io.on('connection', function(socket) {
     socket.on('guess', function(data) {
         var question = show.getQuestion(data.question);
         if(data.player != '') {
-        var player = _.filter(players, function(p) {
-            return p.name == data.player;
-        })[0];
-        var correctAnswer = question.answer;
-        var grades = show.grade(question, data.answer);
-        var points = grades[0];
-        var unanswered = grades[1];
-        player.money += points;
-        console.log('Player ' + player.name + ' got $' + points);
-        if(points > 0) {
-            inCharge = player.name;
-        }
-        io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
-        }
-        else {
+            var player = _.filter(players, function(p) {
+                    return p.name == data.player;
+            })[0];
+            var correctAnswer = question.answer;
+            var grades = show.grade(question, data.answer);
+            var points = grades[0];
+            var unanswered = grades[1];
+            player.money += points;
+            console.log('Player ' + player.name + ' got $' + points);
+            if(points > 0) {
+                inCharge = player.name;
+            }
+            io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
+        } else {
+            show.grade(question, '');
             io.emit('rightAnswer', {points: 0, answer: question.answer, player: 'None', key: data.question});
         }
         io.emit('inCharge', inCharge);
