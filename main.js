@@ -4,7 +4,7 @@ var FuzzySet = require('fuzzyset.js');
 var _ = require('underscore-node');
 var express = require('express');
 var path = require('path');
-var models = require('./js/player.js');
+var models = require('./js/models.js');
 var utils = require('./js/utils.js');
 
 var Show = models.show;
