@@ -39,6 +39,13 @@ var show = new Show(questions);
 
 console.log("Playing episode " + randomShow);
 io.on('connection', function(socket) {
+    // No need to restart server for set of questions
+    if(players.length === 0) {
+        var randomShow = _.sample(questionFiles);
+        var questions = require(path.join(__dirname, 'questionsets', randomShow));
+        show = new Show(questions);
+    }
+
     if(gameStarted || players.length >= 3) {
         console.log('Game is full');
         socket.emit('fullgame', 'Game is full or already started');
@@ -102,6 +109,7 @@ io.on('connection', function(socket) {
 
     socket.on('guess', function(data) {
         var question = show.getQuestion(data.question);
+        var unanswered;
         if(data.player != '') {
             var player = _.filter(players, function(p) {
                     return p.name == data.player;
@@ -109,7 +117,7 @@ io.on('connection', function(socket) {
             var correctAnswer = question.answer;
             var grades = show.grade(question, data.answer);
             var points = grades[0];
-            var unanswered = grades[1];
+            unanswered = grades[1];
             player.money += points;
             console.log('Player ' + player.name + ' got $' + points);
             if(points > 0) {
@@ -117,7 +125,8 @@ io.on('connection', function(socket) {
             }
             io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
         } else {
-            show.grade(question, '');
+            var grades = show.grade(question, '');
+            unanswered = grades[1];
             io.emit('rightAnswer', {points: 0, answer: question.answer, player: 'None', key: data.question});
         }
         io.emit('inCharge', inCharge);
