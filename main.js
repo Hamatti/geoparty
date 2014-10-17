@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var FuzzySet = require('fuzzyset.js');
 var _ = require('underscore-node');
 var express = require('express');
