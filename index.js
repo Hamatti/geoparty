@@ -87,6 +87,11 @@ io.on('connection', function(socket) {
         io.emit('showQuestion', question);
     });
 
+    socket.on('claim', function() {
+        socket.broadcast.emit('claimed');
+        socket.emit('makeAGuess');
+    });
+
     socket.on('guess', function(data) {
         var question = show.getQuestion(data.question);
         var player = _.filter(players, function(p) {

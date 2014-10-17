@@ -61,15 +61,18 @@ $(function() {
     });
 
     socket.on('inCharge', function(name) {
+        if (name === player) {
+            _inCharge = 'Your';
+        } else {
+            _inCharge = name + "'s";
+        }
+        $('h1').html(_inCharge + ' turn to choose a question');
         inCharge = name;
-        $('h1').html(inCharge);
     });
 
 
 
     $('.gamearea').on('click', '.question:not(.done)', function(ev) {
-        console.log(player);
-        console.log(inCharge);
         if(player !== inCharge) {
             return;
         }
@@ -83,24 +86,43 @@ $(function() {
         over.empty();
         var p = $('<p>');
         var p2 = $('<p>');
-        var input = $('<input>');
+        //var input = $('<input>');
         var button = $('<button>');
-        button.html('Answer');
+        button.html('I KNOW THIS!');
+        button.attr('class', 'claim');
         p.html(q.question);
-        p2.append(input);
         p2.append(button);
         p2.attr('data-key', q.value + '::' + q.category);
-        p2.attr('class', 'answer');
+        p2.attr('class', 'claim');
         over.append(p);
         over.append(p2);
         over.show();
     });
 
-   $('.overlay').on('click', 'button', function(ev) {
-        var $target = $(ev.target);
-        var key = $target.parent().data('key');
-        var answer = $target.parent().find('input').val();
+   $('.overlay').on('click', 'button.claim', function(ev) {
+        var key = $(ev.target).parent().data('key');
+        socket.emit('claim', key);
+   });
+
+   $('.overlay').on('click', 'button.guess', function(ev) {
+        var $target = $(ev.target).parent();
+        var key = $target.data('key');
+        var answer = $target.find('input').val();
+
         socket.emit('guess', {question: key, answer: answer, player: player});
+   });
+
+   socket.on('claimed', function() {
+        $('.claim').remove();
+   });
+
+   socket.on('makeAGuess', function() {
+       var $target = $('.overlay p.claim');
+       $target.empty();
+       var $input = $('<input class="answer" />');
+       var $button = $('<button class="guess">Guess</button>');
+       $target.append($input);
+       $target.append($button);
    });
 
    socket.on('rightAnswer', function(data) {
