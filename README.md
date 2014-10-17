@@ -10,6 +10,7 @@ This game is a little fun hackathon project inspired by love for Jeopardy. I wan
 
 Game supports up to 3 players per game (can be increased in `main.js`).
 
+Anyone evaluating the quality of the code: this was a hackathon project with no emphasis on writing good or beautiful code.
 
 ## Installation
 
