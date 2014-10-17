@@ -1,10 +1,9 @@
 #GEOPARTY
 For fun version of Jeopardy for Chartio Hackathon Oct 16-17th 2014
 
-![jeopardy](http://hamatti.org/geoparty.png)
-
 Author: Juha-Matti Santala
 
+![jeopardy](http://hamatti.org/geoparty.png)
 ## Introduction
 
 This game is a little fun hackathon project inspired by love for Jeopardy. I wanted to do something with Node.js since I mostly hack around with Python.
