@@ -94,6 +94,7 @@ io.on('connection', function(socket) {
 
     socket.on('guess', function(data) {
         var question = show.getQuestion(data.question);
+        if(data.player != '') {
         var player = _.filter(players, function(p) {
             return p.name == data.player;
         })[0];
@@ -107,6 +108,10 @@ io.on('connection', function(socket) {
             inCharge = player.name;
         }
         io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
+        }
+        else {
+            io.emit('rightAnswer', {points: 0, answer: question.answer, player: 'None', key: data.question});
+        }
         io.emit('inCharge', inCharge);
         io.emit('playerChange', {players: players});
         if(unanswered === 0 && round === 0) {

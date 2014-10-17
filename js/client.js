@@ -92,11 +92,15 @@ $(function() {
         button.attr('class', 'claim');
         p.html(q.question);
         p2.append(button);
-        p2.attr('data-key', q.value + '::' + q.category);
+        var key = q.value + '::' + q.category;
+        p2.attr('data-key', key);
         p2.attr('class', 'claim');
         over.append(p);
         over.append(p2);
         over.show();
+        setTimeout(function() {
+            socket.emit('guess', {question: key, answer: '', player: ''});
+        }, 10000);
     });
 
    $('.overlay').on('click', 'button.claim', function(ev) {
@@ -127,11 +131,17 @@ $(function() {
 
    socket.on('rightAnswer', function(data) {
        var key = data.key;
-       var playerName = data.player.name;
+       var message;
+       if(player !== 'None') {
+         var playerName = data.player.name;
+         message = '$' + data.points + ' for ' + playerName;
+       } else {
+         message = 'No one answered';
+       }
 
        $('.overlay').hide();
        var $target = $('.question[data-key="' + key + '"]')
-       $target.html('$' + data.points + ' for ' + playerName);
+       $target.html(message);
        $target.addClass('done');
        if(data.points < 0) {
           $target.addClass('wrong');
