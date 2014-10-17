@@ -4,11 +4,11 @@ var FuzzySet = require('fuzzyset.js');
 var _ = require('underscore-node');
 var express = require('express');
 var path = require('path');
-var questions = require('./questionsets/737.json');
-var util = require('./js/player.js');
+var models = require('./js/player.js');
+var utils = require('./js/utils.js');
 
-var Show = util.show;
-var User = util.user;
+var Show = models.show;
+var User = models.user;
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -26,13 +26,18 @@ app.get('/game/', function(req, res) {
     res.sendFile(path.join(__dirname, 'game.html'));
 });
 
-var players = [];
-var i = 0;
-var gameStarted = false;
-var round = 1;
-var inCharge;
+var players = [],
+    i = 0,
+    gameStarted = false,
+    round = 0,
+    inCharge;
 
+var questionFiles = utils.getFiles();
+var randomShow = _.sample(questionFiles);
+var questions = require(path.join(__dirname, 'questionsets', randomShow));
 var show = new Show(questions);
+
+console.log("Playing episode " + randomShow);
 io.on('connection', function(socket) {
     if(gameStarted || players.length >= 3) {
         console.log('Game is full');
@@ -105,7 +110,7 @@ io.on('connection', function(socket) {
         var points = grades[0];
         var unanswered = grades[1];
         player.money += points;
-        console.log('Player ' + player.name + ' got ' + points + ' points.');
+        console.log('Player ' + player.name + ' got $' + points);
         if(points > 0) {
             inCharge = player.name;
         }

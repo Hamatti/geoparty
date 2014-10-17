@@ -129,9 +129,10 @@ $(function() {
    });
 
    socket.on('rightAnswer', function(data) {
-       var key = data.key;
-       var message;
-       if(player !== 'None') {
+       var key = data.key,
+           message;
+       
+       if(data.player !== 'None') {
          var playerName = data.player.name;
          message = '$' + data.points + ' for ' + playerName;
        } else {
@@ -148,7 +149,12 @@ $(function() {
        var $rightOverlay = $('.answerlayout');
        $rightOverlay.empty();
        var $p = $('<p>Right answer was ' + data.answer + '</p>');
-       var $p2 = $('<p>' + data.player.name + ' got ' + data.points + ' points.</p>');
+       var $p2;
+       if(data.player !== 'None') {
+           $p2 = $('<p>' + data.player.name + ' got $' + data.points +'</p>');
+       } else {
+           $p2 = $('<p> No one got this right, no points </p>');
+       }
        $rightOverlay.append($p);
        $rightOverlay.append($p2);
        $rightOverlay.show();
