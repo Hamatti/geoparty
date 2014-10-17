@@ -39,12 +39,13 @@ $(function() {
         socket.emit('name', {'name': name});
         $('#game').show();
         player = name;
-        if($('.playerlist').children().length === 1){
-            $('.forcestart').append('<button id="startgame">Start the Game</button>');
-        }
         return false;
     });
 
+    socket.on('gamehost', function() {
+        $('.forcestart').append('<button id="startgame">Start the Game</button>');
+    });
+    
     socket.on('playerChange', function(data) {
         var ul = $('.playerlist');
         ul.empty();

@@ -44,6 +44,7 @@ io.on('connection', function(socket) {
         var randomShow = _.sample(questionFiles);
         var questions = require(path.join(__dirname, 'questionsets', randomShow));
         show = new Show(questions);
+        socket.emit('gamehost');
     }
 
     if(gameStarted || players.length >= 3) {
