@@ -134,7 +134,7 @@ $(function() {
        window.location = '/';
    });
 
-   $('#startgame').on('click', function(ev) {
+   $('body').on('click', '#startgame', function(ev) {
        socket.emit('forcestart', {});
    });
 });
