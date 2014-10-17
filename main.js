@@ -125,7 +125,9 @@ io.on('connection', function(socket) {
         io.emit('playerChange', {players: players});
         if(unanswered === 0 && round === 0) {
             round++
+            lastPlayer = _.sortBy(players, function(p) { return p.money; })[0];
             io.emit('nextRound', show.getQuestions(round));
+            io.emit('inCharge', lastPlayer);
         } else if (unanswered == 0 && round === 1) {
             console.log('End.');
             io.emit('endGame', {players: players});
