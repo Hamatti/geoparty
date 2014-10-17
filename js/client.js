@@ -96,7 +96,7 @@ $(function() {
             var p2 = $('<p>');
             var button = $('<button>');
             button.html('I KNOW THIS!');
-            button.attr('class', 'claim');
+            button.attr('class', 'claim btn btn-default');
             p.html(q.question);
             p2.append(button);
             key = q.value + '::' + q.category;
@@ -105,7 +105,7 @@ $(function() {
             over.append(p);
             over.append(p2);
             over.show();
-        }, 3000);
+        }, 2000);
         timeout = setTimeout(function() {
             socket.emit('guess', {question: key, answer: '', player: ''});
         }, 10000);
@@ -116,12 +116,13 @@ $(function() {
         socket.emit('claim', player);
    });
 
-   $('.overlay').on('click', 'button.guess', function(ev) {
+   $('.overlay').on('submit', 'form.guess', function(ev) {
         var $target = $(ev.target).parent();
         var key = $target.data('key');
         var answer = $target.find('input').val();
 
         socket.emit('guess', {question: key, answer: answer, player: player});
+        return false;
    });
 
    socket.on('claimed', function(player) {
@@ -134,10 +135,12 @@ $(function() {
    socket.on('makeAGuess', function() {
        var $target = $('.overlay p.claim');
        $target.empty();
+       var form = $('<form class="guess">');
        var $input = $('<input class="answer" />');
-       var $button = $('<button class="guess">Guess</button>');
-       $target.append($input);
-       $target.append($button);
+       var $button = $('<button class="btn btn-default">Guess</button>');
+       form.append($input);
+       form.append($button);
+       $target.append(form);
        $input.focus();
    });
 

@@ -55,7 +55,7 @@ exports.show = function(questions) {
         } else {
             correctness = 0;
         }
-        var points = (correctness > 0.4) ? value : -value;
+        var points = (correctness > 0.5) ? value : -value;
         this.unanswered--;
         return [points, this.unanswered];
     }
