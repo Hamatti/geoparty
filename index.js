@@ -27,12 +27,13 @@ app.get('/game/', function(req, res) {
 var players = [];
 var i = 0;
 var gameStarted = false;
-var round = 0;
+var round = 1;
 
 var show = new Show(questions);
 io.on('connection', function(socket) {
-    if(players.length >= 3) {
+    if(gameStarted || players.length >= 3) {
         console.log('Game is full');
+        socket.emit('fullgame', 'Game is full or already started');
         return;
     }
     else {
@@ -42,10 +43,10 @@ io.on('connection', function(socket) {
         console.log(players);
         io.emit('playerChange', { 'players': players });
 
-        if(true || (players.length == 3 && !gameStarted)) {
+        if(players.length == 3 && !gameStarted) {
             // Start the game
             gameStarted = true;
-            playQuestions = show.getQuestions(0);
+            playQuestions = show.getQuestions(round);
             io.emit('gameInit', {round: 1, questions: playQuestions});
         }
         socket.on('disconnect', function() {
@@ -54,7 +55,18 @@ io.on('connection', function(socket) {
             io.emit('playerChange', { 'players': players });
         });
     }
+
+    socket.on('forcestart', function() {
+        gameStarted = true;
+        playQuestions = show.getQuestions(round);
+        io.emit('gameInit', {round: round, questions: playQuestions});
+    });
     socket.on('name', function(data) {
+        if(_.filter(players, function(p) {
+            return p.name == data.name;
+           }).length) {
+            data.name = data.name += '_2';
+        }
         player.name = data.name;
         console.log("Changed name: " + player.name);
         io.emit('playerChange', { 'players': players });
@@ -84,7 +96,8 @@ io.on('connection', function(socket) {
             round++
             io.emit('nextRound', show.getQuestions(round));
         } else if (unanswered == 0 && round === 1) {
-            io.emit('endGame', {});
+            console.log('End.');
+            io.emit('endGame', {players: players});
         }
     });
 });

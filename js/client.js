@@ -40,6 +40,9 @@ $(function() {
         socket.emit('name', {'name': name});
         $('#game').show();
         player = name;
+        if($('.playerlist').children().length === 1){
+            $('.forcestart').append('<button id="startgame">Start anyway</button>');
+        }
     });
 
     socket.on('playerChange', function(data) {
@@ -107,4 +110,31 @@ $(function() {
        insertQuestions(questions);    
    });
 
+   socket.on('endGame', function(players) {
+       var topList = _.sortBy(players.players, function(p) {
+           return p.money;
+       });
+       var overlay = $('.overlay');
+       overlay.empty();
+       var h1 = $('<h1>');
+       h1.html('Final score');
+       overlay.append(h1);
+       var ol = $('<ol>');
+       _.each(topList, function(p) {
+           var li = $('<li>');
+           li.html(p.name + ': ' + p.money);
+           ol.append(li);
+       });
+       overlay.append(ol);
+       overlay.show();
+       $('.gamearea').hide();
+   });
+
+   socket.on('fullgame', function(msg) {
+       window.location = '/';
+   });
+
+   $('#startgame').on('click', function(ev) {
+       socket.emit('forcestart', {});
+   });
 });
