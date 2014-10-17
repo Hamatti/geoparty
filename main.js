@@ -3,7 +3,7 @@ var _ = require('underscore-node');
 var express = require('express');
 var path = require('path');
 var questions = require('./737.json');
-var util = require('./player.js');
+var util = require('./js/player.js');
 
 var Show = util.show;
 var User = util.user;

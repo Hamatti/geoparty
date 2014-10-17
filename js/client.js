@@ -1,7 +1,5 @@
 var socket = io();
-var player;
-var inCharge;
-var timeout;
+var player, inCharge, timeout;
 
 var insertQuestions = function(_questions) {
     var $target = $('.gamearea');
@@ -15,8 +13,7 @@ var insertQuestions = function(_questions) {
     var row5 = $('<tr>');
     var rows = [row1, row2, row3, row4, row5];
     for(var category in _questions) {
-        var $th = $('<th>');
-        $th.html(category);
+        var $th = $('<th>' + category + '</th>');
         $headerRow.append($th);
         var questions = _questions[category];
         _.each(questions, function(q, i) {
