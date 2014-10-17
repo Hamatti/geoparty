@@ -31,7 +31,7 @@ var insertQuestions = function(_questions) {
     });
     $target.append($table);
     };
-    
+
 $(function() {
     $('#submit').on('click', function(ev) {
         var name = $(ev.target).parent().find('input').val();
@@ -68,15 +68,13 @@ $(function() {
         inCharge = name;
     });
 
-
-
     $('.gamearea').on('click', '.question:not(.done)', function(ev) {
         $(ev.target).addClass('done'); // Try to prevent multiple clicks due to lag
         if(player !== inCharge) {
             return;
         }
         var key = $(ev.target).data('key');
-        socket.emit('getQuestion', key); 
+        socket.emit('getQuestion', key);
     });
 
     socket.on('showQuestion', function(q) {
@@ -138,7 +136,7 @@ $(function() {
    socket.on('rightAnswer', function(data) {
        var key = data.key,
            message;
-       
+
        if(data.player !== 'None') {
          var playerName = data.player.name;
          message = '$' + data.points + ' for ' + playerName;
@@ -177,11 +175,11 @@ $(function() {
            $rightOverlay.hide();
            $('.gamearea').show();
        }, 3000);
-        
+
    });
 
    socket.on('nextRound', function(questions) {
-       insertQuestions(questions);    
+       insertQuestions(questions);
    });
 
    socket.on('endGame', function(players) {
