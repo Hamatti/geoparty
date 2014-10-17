@@ -25,6 +25,15 @@ Run
 
 `$ npm main.js`
 
+## Generating more questionsets
+
+*HOX requires [jq](http://stedolan.github.io/jq/)*
+
+In `bin/` is a file `create_questions.sh` that takes a show number as a parameter and creates a subset to run against.
+
+`$ cd bin`
+
+`$ ./create_questions.sh 4000` creates a subset from episode 4000.
 
 
 
