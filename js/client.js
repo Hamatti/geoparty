@@ -49,7 +49,7 @@ $(function() {
         ul.empty();
         _.each(data.players, function(p) {
             var $li = $('<li>');
-            $li.append(p.name + ": " + p.money);
+            $li.append(p.name + "<br />$" + p.money);
             ul.append($li);
         });
     });
