@@ -28,6 +28,7 @@ var players = [];
 var i = 0;
 var gameStarted = false;
 var round = 1;
+var inCharge;
 
 var show = new Show(questions);
 io.on('connection', function(socket) {
@@ -47,20 +48,28 @@ io.on('connection', function(socket) {
             // Start the game
             gameStarted = true;
             playQuestions = show.getQuestions(round);
+            inCharge = _.sample(players).name;
             io.emit('gameInit', {round: 1, questions: playQuestions});
+            io.emit('inCharge', inCharge);
         }
         socket.on('disconnect', function() {
             console.log('user ' + player.name + ' disconnected');
             players.splice(players.indexOf(player), 1);
             io.emit('playerChange', { 'players': players });
+            if(_.isEmpty(players)) {
+                gameStarted = false;
+            }
         });
     }
 
     socket.on('forcestart', function() {
         gameStarted = true;
         playQuestions = show.getQuestions(round);
+        inCharge = _.sample(players).name;
         io.emit('gameInit', {round: round, questions: playQuestions});
+        io.emit('inCharge', inCharge);
     });
+
     socket.on('name', function(data) {
         if(_.filter(players, function(p) {
             return p.name == data.name;
@@ -89,9 +98,12 @@ io.on('connection', function(socket) {
         var unanswered = grades[1];
         player.money += points;
         console.log('Player ' + player.name + ' got ' + points + ' points.');
+        if(points > 0) {
+            inCharge = player.name;
+        }
         io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
+        io.emit('inCharge', inCharge);
         io.emit('playerChange', {players: players});
-        console.log(unanswered);
         if(unanswered === 0 && round === 0) {
             round++
             io.emit('nextRound', show.getQuestions(round));

@@ -1,5 +1,6 @@
 var socket = io();
 var player;
+var inCharge;
 
 var insertQuestions = function(_questions) {
     var $target = $('.gamearea');
@@ -57,11 +58,21 @@ $(function() {
 
     socket.on('gameInit', function(data) {
         insertQuestions(data.questions);
-            });
+    });
+
+    socket.on('inCharge', function(name) {
+        inCharge = name;
+        $('h1').html(inCharge);
+    });
 
 
 
     $('.gamearea').on('click', '.question:not(.done)', function(ev) {
+        console.log(player);
+        console.log(inCharge);
+        if(player !== inCharge) {
+            return;
+        }
         var key = $(ev.target).data('key');
         socket.emit('getQuestion', key); 
     });
@@ -103,7 +114,18 @@ $(function() {
        if(data.points < 0) {
           $target.addClass('wrong');
        }
-       $('.gamearea').show();
+       var $rightOverlay = $('.answerlayout');
+       $rightOverlay.empty();
+       var $p = $('<p>Right answer was ' + data.answer + '</p>');
+       var $p2 = $('<p>' + data.player.name + ' got ' + data.points + ' points.</p>');
+       $rightOverlay.append($p);
+       $rightOverlay.append($p2);
+       $rightOverlay.show();
+       setTimeout(function() {
+           $rightOverlay.hide();
+            $('.gamearea').show();
+       }, 3000);
+        
    });
 
    socket.on('nextRound', function(questions) {
