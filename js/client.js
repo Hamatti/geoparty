@@ -195,6 +195,7 @@ $(function() {
 
    socket.on('endGame', function(players) {
        clearTimeout(timeout);
+       $('.answerlayout').hide();
        var topList = _.sortBy(players.players, function(p) {
            return -p.money;
        });

@@ -71,6 +71,7 @@ io.on('connection', function(socket) {
 
     socket.on('forcestart', function() {
         gameStarted = true;
+        _.each(players, function(p) { p.money = 0; });
         playQuestions = show.getQuestions(round);
         inCharge = _.sample(players).name;
         io.emit('gameInit', {round: round, questions: playQuestions});
