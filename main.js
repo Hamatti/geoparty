@@ -59,14 +59,6 @@ io.on('connection', function(socket) {
         console.log(players);
         io.emit('playerChange', { 'players': players });
 
-        if(players.length == 3 && !gameStarted) {
-            // Start the game
-            gameStarted = true;
-            playQuestions = show.getQuestions(round);
-            inCharge = 'Juhis';
-            io.emit('gameInit', {round: 0, questions: playQuestions});
-            io.emit('inCharge', inCharge);
-        }
         socket.on('disconnect', function() {
             console.log('user ' + player.name + ' disconnected');
             players.splice(players.indexOf(player), 1);
@@ -141,6 +133,6 @@ io.on('connection', function(socket) {
     });
 });
 
-http.listen(3000, function(){
+http.listen(3001, function(){
       console.log('listening on *:3000');
 });

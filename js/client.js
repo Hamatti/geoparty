@@ -40,7 +40,7 @@ $(function() {
         $('#game').show();
         player = name;
         if($('.playerlist').children().length === 1){
-            $('.forcestart').append('<button id="startgame">Start anyway</button>');
+            $('.forcestart').append('<button id="startgame">Start the Game</button>');
         }
     });
 
