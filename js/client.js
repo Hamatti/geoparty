@@ -71,6 +71,7 @@ $(function() {
 
 
     $('.gamearea').on('click', '.question:not(.done)', function(ev) {
+        $(ev.target).addClass('done'); // Try to prevent multiple clicks due to lag
         if(player !== inCharge) {
             return;
         }
