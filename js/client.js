@@ -126,6 +126,7 @@ $(function() {
        var $button = $('<button class="guess">Guess</button>');
        $target.append($input);
        $target.append($button);
+       $input.focus();
    });
 
    socket.on('rightAnswer', function(data) {
