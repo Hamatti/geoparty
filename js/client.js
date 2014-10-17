@@ -103,8 +103,7 @@ $(function() {
 
    $('.overlay').on('click', 'button.claim', function(ev) {
         clearTimeout(timeout);
-        var key = $(ev.target).parent().data('key');
-        socket.emit('claim', key);
+        socket.emit('claim', player);
    });
 
    $('.overlay').on('click', 'button.guess', function(ev) {
@@ -115,8 +114,11 @@ $(function() {
         socket.emit('guess', {question: key, answer: answer, player: player});
    });
 
-   socket.on('claimed', function() {
-        $('.claim').remove();
+   socket.on('claimed', function(player) {
+        clearTimeout(timeout);
+        $button = $('button.claim');
+        $button.prop('disabled', true);
+        $button.html(player + ' thinks he knows this');
    });
 
    socket.on('makeAGuess', function() {
@@ -159,9 +161,9 @@ $(function() {
        $rightOverlay.append($p);
        $rightOverlay.append($p2);
        $rightOverlay.show();
-       setTimeout(function() {
+       timeout = setTimeout(function() {
            $rightOverlay.hide();
-            $('.gamearea').show();
+           $('.gamearea').show();
        }, 3000);
         
    });
@@ -171,6 +173,7 @@ $(function() {
    });
 
    socket.on('endGame', function(players) {
+       clearTimeout(timeout);
        var topList = _.sortBy(players.players, function(p) {
            return p.money;
        });

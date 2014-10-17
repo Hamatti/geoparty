@@ -46,6 +46,7 @@ io.on('connection', function(socket) {
     }
     else {
         var player = new User('player' + i++);
+        round = 0;
         players.push(player)
         console.log(player.name + ' joined the game');
         console.log(players);
@@ -56,7 +57,7 @@ io.on('connection', function(socket) {
             gameStarted = true;
             playQuestions = show.getQuestions(round);
             inCharge = _.sample(players).name;
-            io.emit('gameInit', {round: 1, questions: playQuestions});
+            io.emit('gameInit', {round: 0, questions: playQuestions});
             io.emit('inCharge', inCharge);
         }
         socket.on('disconnect', function() {
@@ -94,8 +95,8 @@ io.on('connection', function(socket) {
         io.emit('showQuestion', question);
     });
 
-    socket.on('claim', function() {
-        socket.broadcast.emit('claimed');
+    socket.on('claim', function(player) {
+        socket.broadcast.emit('claimed', player);
         socket.emit('makeAGuess');
     });
 

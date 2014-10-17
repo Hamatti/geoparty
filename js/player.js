@@ -48,7 +48,6 @@ exports.show = function(questions) {
 
     this.grade = function(question, answer) {
         var value = parseInt(question.value.replace('$', '').replace(',', ''));
-        console.log(value);
         var f = new FuzzySet([question.answer]);
         var fuzz = f.get(answer);
         if(fuzz != null) {
@@ -56,11 +55,9 @@ exports.show = function(questions) {
         } else {
             correctness = 0;
         }
-        console.log(correctness);
         var points = (correctness > 0.4) ? value : -value;
         this.unanswered--;
         return [points, this.unanswered];
     }
-
 }
 
