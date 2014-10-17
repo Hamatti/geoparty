@@ -33,7 +33,7 @@ var insertQuestions = function(_questions) {
     };
 
 $(function() {
-    $('#submit').on('click', function(ev) {
+    $('#yourname').on('submit', function(ev) {
         var name = $(ev.target).parent().find('input').val();
         $('#name').hide();
         socket.emit('name', {'name': name});
@@ -42,6 +42,7 @@ $(function() {
         if($('.playerlist').children().length === 1){
             $('.forcestart').append('<button id="startgame">Start the Game</button>');
         }
+        return false;
     });
 
     socket.on('playerChange', function(data) {
