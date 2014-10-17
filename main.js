@@ -51,23 +51,14 @@ io.on('connection', function(socket) {
         socket.emit('fullgame', 'Game is full or already started');
         return;
     }
-    else {
-        var player = new User('player' + i++);
-        round = 0;
-        players.push(player)
-        console.log(player.name + ' joined the game');
-        console.log(players);
+    socket.on('disconnect', function() {
+        console.log('user ' + player.name + ' disconnected');
+        players.splice(players.indexOf(player), 1);
         io.emit('playerChange', { 'players': players });
-
-        socket.on('disconnect', function() {
-            console.log('user ' + player.name + ' disconnected');
-            players.splice(players.indexOf(player), 1);
-            io.emit('playerChange', { 'players': players });
-            if(_.isEmpty(players)) {
-                gameStarted = false;
-            }
-        });
-    }
+        if(_.isEmpty(players)) {
+            gameStarted = false;
+        }
+    });
 
     socket.on('forcestart', function() {
         gameStarted = true;
@@ -83,7 +74,8 @@ io.on('connection', function(socket) {
            }).length) {
             data.name = data.name += '_2';
         }
-        player.name = data.name;
+        player = new User(data.name);
+        players.push(player);
         console.log("Changed name: " + player.name);
         io.emit('playerChange', { 'players': players });
     });
