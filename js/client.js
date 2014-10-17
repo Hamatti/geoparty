@@ -1,6 +1,7 @@
 var socket = io();
 var player;
 var inCharge;
+var timeout;
 
 var insertQuestions = function(_questions) {
     var $target = $('.gamearea');
@@ -98,12 +99,13 @@ $(function() {
         over.append(p);
         over.append(p2);
         over.show();
-        setTimeout(function() {
+        timeout = setTimeout(function() {
             socket.emit('guess', {question: key, answer: '', player: ''});
         }, 10000);
     });
 
    $('.overlay').on('click', 'button.claim', function(ev) {
+        clearTimeout(timeout);
         var key = $(ev.target).parent().data('key');
         socket.emit('claim', key);
    });
