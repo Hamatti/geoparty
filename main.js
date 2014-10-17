@@ -63,7 +63,7 @@ io.on('connection', function(socket) {
             // Start the game
             gameStarted = true;
             playQuestions = show.getQuestions(round);
-            inCharge = _.sample(players).name;
+            inCharge = 'Juhis';
             io.emit('gameInit', {round: 0, questions: playQuestions});
             io.emit('inCharge', inCharge);
         }
@@ -123,7 +123,7 @@ io.on('connection', function(socket) {
             if(points > 0) {
                 inCharge = player.name;
             }
-            io.emit('rightAnswer', {points: points, answer: correctAnswer, player: player, key: data.question});
+            io.emit('rightAnswer', {guess: data.answer, points: points, answer: correctAnswer, player: player, key: data.question});
         } else {
             var grades = show.grade(question, '');
             unanswered = grades[1];

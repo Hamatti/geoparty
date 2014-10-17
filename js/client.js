@@ -83,9 +83,12 @@ $(function() {
         $('.gamearea').hide();
         var over = $('.overlay');
         over.empty();
+        var cat = $('<h3>');
+        cat.html(q.category);
+        cat.attr('class', 'category');
+        over.append(cat);
         var p = $('<p>');
         var p2 = $('<p>');
-        //var input = $('<input>');
         var button = $('<button>');
         button.html('I KNOW THIS!');
         button.attr('class', 'claim');
@@ -119,7 +122,7 @@ $(function() {
         clearTimeout(timeout);
         $button = $('button.claim');
         $button.prop('disabled', true);
-        $button.html(player + ' thinks he knows this');
+        $button.html(player + ' thinks (s)he knows this');
    });
 
    socket.on('makeAGuess', function() {
@@ -150,8 +153,16 @@ $(function() {
        if(data.points < 0) {
           $target.addClass('wrong');
        }
+       if(data.player === 'None') {
+           $target.addClass('unanswered');
+       }
        var $rightOverlay = $('.answerlayout');
        $rightOverlay.empty();
+       var $p0;
+       if (data.player !== 'None') {
+        $p0 = $('<p>' + data.player.name + ' guessed ' + data.guess + '</p>');
+        $rightOverlay.append($p0);
+       }
        var $p = $('<p>Right answer was ' + data.answer + '</p>');
        var $p2;
        if(data.player !== 'None') {
@@ -176,7 +187,7 @@ $(function() {
    socket.on('endGame', function(players) {
        clearTimeout(timeout);
        var topList = _.sortBy(players.players, function(p) {
-           return p.money;
+           return -p.money;
        });
        var overlay = $('.overlay');
        overlay.empty();
